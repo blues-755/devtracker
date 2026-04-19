@@ -15,12 +15,11 @@ provider "aws" {
   region = var.aws_region
 }
 
-# ── Your current public IP (locks SSH to your machine only) ──────────────────
 data "http" "my_ip" {
   url = "https://checkip.amazonaws.com"
 }
 
-# ── Latest Ubuntu 22.04 LTS AMI ──────────────────────────────────────────────
+# ── Latest Ubuntu 22.04 LTS AMI ─────
 data "aws_ami" "ubuntu" {
   most_recent = true
   owners      = ["099720109477"] # Canonical
@@ -36,7 +35,7 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-# ── VPC ───────────────────────────────────────────────────────────────────────
+# ── VPC ──
 resource "aws_vpc" "main" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
@@ -48,7 +47,7 @@ resource "aws_vpc" "main" {
   }
 }
 
-# ── Internet Gateway ──────────────────────────────────────────────────────────
+# ── Internet Gateway ───
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
@@ -58,7 +57,7 @@ resource "aws_internet_gateway" "main" {
   }
 }
 
-# ── Public Subnet ─────────────────────────────────────────────────────────────
+# ── Public Subnet ──────
 resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"
@@ -71,7 +70,7 @@ resource "aws_subnet" "public" {
   }
 }
 
-# ── Route Table ───────────────────────────────────────────────────────────────
+# ── Route Table ───
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
@@ -86,13 +85,13 @@ resource "aws_route_table" "public" {
   }
 }
 
-# ── Route Table Association ───────────────────────────────────────────────────
+# ── Route Table Association ────────
 resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public.id
   route_table_id = aws_route_table.public.id
 }
 
-# ── Security Group ────────────────────────────────────────────────────────────
+# ── Security Group ─────────
 resource "aws_security_group" "jenkins" {
   name        = "${var.project_name}-sg"
   description = "Security group for Jenkins server"
@@ -135,13 +134,13 @@ resource "aws_security_group" "jenkins" {
   }
 }
 
-# ── Key Pair ──────────────────────────────────────────────────────────────────
+# ── Key Pair ─────
 resource "aws_key_pair" "jenkins" {
   key_name   = "${var.project_name}-key"
   public_key = file(pathexpand(var.public_key_path))
 }
 
-# ── EC2 Instance ──────────────────────────────────────────────────────────────
+# ── EC2 Instance ───────
 resource "aws_instance" "jenkins" {
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = var.instance_type
