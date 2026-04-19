@@ -1,17 +1,17 @@
 #!/bin/bash
 set -e
 
-echo "── Updating packages ──────────────────────────────"
+echo "Updating packages "
 apt-get update -y
 apt-get upgrade -y
 
-echo "── Installing Java 17 ─────────────────────────────"
+echo "Installing Java 17 "
 apt-get install -y openjdk-17-jdk
 
-echo "── Installing Maven ───────────────────────────────"
+echo "Installing Maven "
 apt-get install -y maven
 
-echo "── Installing Jenkins ─────────────────────────────"
+echo "Installing Jenkins "
 curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | \
   gpg --dearmor -o /usr/share/keyrings/jenkins-keyring.gpg
 
@@ -22,10 +22,10 @@ echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.gpg] \
 apt-get update -y
 apt-get install -y jenkins
 
-echo "── Installing Git ─────────────────────────────────"
+echo " Installing Git "
 apt-get install -y git
 
-echo "── Installing Docker ──────────────────────────────"
+echo "Installing Docker "
 apt-get install -y ca-certificates curl gnupg
 install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
@@ -44,10 +44,10 @@ apt-get install -y docker-ce docker-ce-cli containerd.io
 usermod -aG docker jenkins
 usermod -aG docker ubuntu
 
-echo "── Starting services ──────────────────────────────"
+echo " Starting services "
 systemctl enable jenkins
 systemctl start jenkins
 systemctl enable docker
 systemctl start docker
 
-echo "── Done ───────────────────────────────────────────"
+echo "Done "
