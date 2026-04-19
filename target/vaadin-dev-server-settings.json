@@ -1,0 +1,17 @@
+{
+  "frontendFolder": "/Users/lungalangdontshila/Downloads/Courses/SC/scp2-release-and-deployment-tracker-app/frontend",
+  "themeFolder": "themes",
+  "themeResourceFolder": "/Users/lungalangdontshila/Downloads/Courses/SC/scp2-release-and-deployment-tracker-app/frontend/generated/jar-resources",
+  "staticOutput": "target/classes/META-INF/VAADIN/webapp/VAADIN/static",
+  "generatedFolder": "generated",
+  "statsOutput": "target/classes/META-INF/VAADIN/webapp/../config/",
+  "frontendBundleOutput": "target/classes/META-INF/VAADIN/webapp/",
+  "devBundleOutput": "/Users/lungalangdontshila/Downloads/Courses/SC/scp2-release-and-deployment-tracker-app/target/dev-bundle/webapp",
+  "devBundleStatsOutput": "/Users/lungalangdontshila/Downloads/Courses/SC/scp2-release-and-deployment-tracker-app/target/dev-bundle/config",
+  "jarResourcesFolder": "/Users/lungalangdontshila/Downloads/Courses/SC/scp2-release-and-deployment-tracker-app/frontend/generated/jar-resources",
+  "themeName": "",
+  "clientServiceWorkerSource": "/Users/lungalangdontshila/Downloads/Courses/SC/scp2-release-and-deployment-tracker-app/target/sw.ts",
+  "pwaEnabled": false,
+  "offlineEnabled": false,
+  "offlinePath": "'offline.html'"
+}
