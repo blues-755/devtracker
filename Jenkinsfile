@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "devtracker"
+        IMAGE_TAG  = "build-${env.BUILD_NUMBER}"
+    }
+
     tools {
         maven 'Maven-3.9'
     }
@@ -34,14 +39,21 @@ pipeline {
                 sh 'mvn package -DskipTests -q'
             }
         }
+
+        stage('Docker Build') {
+            steps {
+                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest"
+            }
+        }
     }
 
     post {
         success {
-            echo "Build ${env.BUILD_NUMBER} passed — artifact ready at target/*.jar"
+            echo "Build ${env.BUILD_NUMBER} passed — Docker image: ${IMAGE_NAME}:${IMAGE_TAG}"
         }
         failure {
-            echo "Build ${env.BUILD_NUMBER} failed — check test results above"
+            echo "Build ${env.BUILD_NUMBER} failed — check logs above"
         }
     }
 }
