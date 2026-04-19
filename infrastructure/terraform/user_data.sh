@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "Updating packages "
+echo "Updating packages"
 apt-get update -y
 apt-get upgrade -y
 
@@ -11,7 +11,7 @@ apt-get install -y openjdk-17-jdk
 echo "Installing Maven "
 apt-get install -y maven
 
-echo "Installing Jenkins "
+echo "Installing Jenkins"
 curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | \
   gpg --dearmor -o /usr/share/keyrings/jenkins-keyring.gpg
 
