@@ -1,16 +1,8 @@
 pipeline {
     agent any
 
-    environment {
-        JAVA_HOME = '/usr/lib/jvm/java-17-openjdk-amd64'
-        // DB vars only needed for running the app, not tests (tests use H2)
-        DB_URL  = credentials('db-url')
-        DB_USER = credentials('db-user')
-        DB_PASS = credentials('db-pass')
-    }
-
     tools {
-        maven 'Maven-3.9'   // Name must match what you configure in Jenkins Global Tools
+        maven 'Maven-3.9'
     }
 
     stages {
@@ -28,7 +20,6 @@ pipeline {
 
         stage('Test') {
             steps {
-                // Tests run against H2 — no real DB needed here
                 sh 'mvn test'
             }
             post {
