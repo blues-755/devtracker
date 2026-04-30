@@ -1,7 +1,7 @@
 # Deployment Tracker
 
 A Release & Deployment Tracking app built with Vaadin 24, Spring Boot 3, and PostgreSQL.
-Used as the learning vehicle for a full CI/CD pipeline learning path with Jenkins.
+Used as the revision vehicle for a full CI/CD pipeline with Jenkins, Docker and Terraform on AWS.
 
 ## Stack
 
