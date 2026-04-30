@@ -161,3 +161,13 @@ resource "aws_instance" "jenkins" {
     Project = var.project_name
   }
 }
+
+resource "aws_eip" "jenkins" {
+  instance = aws_instance.jenkins.id
+  domain   = "vpc"
+
+  tags = {
+    Name    = "${var.project_name}-eip"
+    Project = var.project_name
+  }
+}
