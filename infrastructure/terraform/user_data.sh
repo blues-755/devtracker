@@ -50,4 +50,4 @@ systemctl start jenkins
 systemctl enable docker
 systemctl start docker
 
-echo "Done"
+echo "Done "
