@@ -2,8 +2,11 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "devtracker"
-        IMAGE_TAG  = "build-${env.BUILD_NUMBER}"
+        AWS_REGION      = "af-south-1"
+        ECR_REGISTRY    = "254730583443.dkr.ecr.af-south-1.amazonaws.com"
+        ECR_REPO        = "devtracker"
+        IMAGE_TAG       = "build-${env.BUILD_NUMBER}"
+        FULL_IMAGE_NAME = "${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}"
     }
 
     tools {
@@ -42,15 +45,26 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
-                sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest"
+                sh "docker build -t ${FULL_IMAGE_NAME} ."
+                sh "docker tag ${FULL_IMAGE_NAME} ${ECR_REGISTRY}/${ECR_REPO}:latest"
+            }
+        }
+
+        stage('Push to ECR') {
+            steps {
+                sh """
+                    aws ecr get-login-password --region ${AWS_REGION} | \
+                    docker login --username AWS --password-stdin ${ECR_REGISTRY}
+                """
+                sh "docker push ${FULL_IMAGE_NAME}"
+                sh "docker push ${ECR_REGISTRY}/${ECR_REPO}:latest"
             }
         }
     }
 
     post {
         success {
-            echo "Build ${env.BUILD_NUMBER} passed — Docker image: ${IMAGE_NAME}:${IMAGE_TAG}"
+            echo "Build ${env.BUILD_NUMBER} passed — image pushed: ${FULL_IMAGE_NAME}"
         }
         failure {
             echo "Build ${env.BUILD_NUMBER} failed — check logs above"
