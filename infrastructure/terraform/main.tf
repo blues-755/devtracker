@@ -148,6 +148,7 @@ resource "aws_instance" "jenkins" {
   vpc_security_group_ids      = [aws_security_group.jenkins.id]
   subnet_id                   = aws_subnet.public.id
   associate_public_ip_address = true
+  iam_instance_profile = aws_iam_instance_profile.jenkins_profile.name
 
   root_block_device {
     volume_size = 20
@@ -162,6 +163,7 @@ resource "aws_instance" "jenkins" {
   }
 }
 
+# ── Elastic IP ─────
 resource "aws_eip" "jenkins" {
   instance = aws_instance.jenkins.id
   domain   = "vpc"
@@ -170,4 +172,49 @@ resource "aws_eip" "jenkins" {
     Name    = "${var.project_name}-eip"
     Project = var.project_name
   }
+}
+
+# ECR Repository for DevTracker
+resource "aws_ecr_repository" "devtracker" {
+  name = "devtracker"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+
+  tags = {
+    Name    = "devtracker"
+    Project = var.project_name
+  }
+}
+
+# IAM Role for EC2 to access ECR
+resource "aws_iam_role" "jenkins_role" {
+  name = "${var.project_name}-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# IAM Policy to allow ECR access
+resource "aws_iam_role_policy_attachment" "ecr_policy" {
+  role       = aws_iam_role.jenkins_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
+}
+
+# IAM Instance Profile to attach to EC2 instance
+resource "aws_iam_instance_profile" "jenkins_profile" {
+  name = "${var.project_name}-profile"
+  role = aws_iam_role.jenkins_role.name
 }
