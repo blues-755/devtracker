@@ -1,17 +1,4 @@
 {
-  "productionMode": false,
-  "eagerServerLoad": false,
-  "npmFolder": "/Users/lungalangdontshila/Downloads/Courses/SC/scp2-release-and-deployment-tracker-app",
-  "node.version": "v20.11.1",
-  "node.download.root": "https://nodejs.org/dist/",
-  "frontendFolder": "/Users/lungalangdontshila/Downloads/Courses/SC/scp2-release-and-deployment-tracker-app/frontend",
-  "connect.javaSourceFolder": "/Users/lungalangdontshila/Downloads/Courses/SC/scp2-release-and-deployment-tracker-app/src/main/java",
-  "javaResourceFolder": "/Users/lungalangdontshila/Downloads/Courses/SC/scp2-release-and-deployment-tracker-app/src/main/resources",
-  "connect.applicationProperties": "/Users/lungalangdontshila/Downloads/Courses/SC/scp2-release-and-deployment-tracker-app/src/main/resources/application.properties",
-  "connect.openApiFile": "/Users/lungalangdontshila/Downloads/Courses/SC/scp2-release-and-deployment-tracker-app/target/generated-resources/openapi.json",
-  "project.frontend.generated": "/Users/lungalangdontshila/Downloads/Courses/SC/scp2-release-and-deployment-tracker-app/frontend/generated",
-  "pnpm.enable": false,
-  "bun.enable": false,
-  "require.home.node": false,
-  "build.folder": "target"
+  "productionMode": true,
+  "eagerServerLoad": false
 }

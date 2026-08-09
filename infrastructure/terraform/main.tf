@@ -218,3 +218,98 @@ resource "aws_iam_instance_profile" "jenkins_profile" {
   name = "${var.project_name}-profile"
   role = aws_iam_role.jenkins_role.name
 }
+
+# Application Server Instance
+
+resource "aws_security_group" "app" {
+  name        = "${var.project_name}-app-sg"
+  description = "Security group for App server"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description = "App UI"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Name    = "${var.project_name}-app-sg"
+    Project = var.project_name
+  }
+}
+
+resource "aws_instance" "app" {
+  ami                         = data.aws_ami.ubuntu.id
+  instance_type               = "t3.small"
+  key_name                    = aws_key_pair.jenkins.key_name
+  vpc_security_group_ids = [aws_security_group.app.id]
+  subnet_id                   = aws_subnet.public.id
+  associate_public_ip_address = true
+  iam_instance_profile        = aws_iam_instance_profile.jenkins_profile.name
+
+  root_block_device {
+    volume_size = 20
+    volume_type = "gp3"
+  }
+
+  user_data = <<-EOF
+    #!/bin/bash
+    apt-get update -y
+    apt-get install -y ca-certificates curl gnupg awscli
+
+    # Install Docker
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+      gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    chmod a+r /etc/apt/keyrings/docker.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+      tee /etc/apt/sources.list.d/docker.list > /dev/null
+    apt-get update -y
+    apt-get install -y docker-ce docker-ce-cli containerd.io
+
+    systemctl enable docker
+    systemctl start docker
+    usermod -aG docker ubuntu
+
+    # Add Jenkins public key for deployment
+    mkdir -p /home/ubuntu/.ssh
+    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCqRxOqm3Rtk/klZUDqplHG5vxMajEzZ34wJJxbcE6GbahVxj+LZ6JmQgFpdcmNlSbwzuuiyxlulkFdkKW47i24SDtFkaOf0LpCbcgOWWK8Ky/pE93bzS0yQMa5ZawoPh0H0bQhs8qooxkJbLwuLCpIBFJ/5jg57KqiZWyN+FKvbThARAja8T7UojGDZd4PwGAa7qluc+fB9w5eb5/31At1R+LSIflS5ynWcYlpg3GaiU4nEAKbqeKmEaRmGHWs86eM0T2XxWVXTD/dzUVK9b5DEzFE+Y866VgmlwTwgtrmGrU8zIHLqWZoGgVbNH7KaTZI3J+N1mN+a8+C5qSOZVqqZZVzAac9BlOD7XpskxAPlP8+sW7mZhLAPwO+RYlN4fn3O1dYsWtUhBEsE8ShMDvVBjVQdqOzYP4eUT+dEx7F7GmhI9FnNRnTRw3oplgpELhecdpxvSucY3sJPfAwJXPTQWLx0jHTIefNsxRSlV4Fhkys9DDp99f435aWLAokwMNC9HJKmWiQInN8Q92MxaqiQf7Mv3XPZXr3Lh9gf9BwSZMcHn6E5i7a+Me9+OZWShCL9M8sUrcu7H9T6LlOjzWRgQAsUmjrJg0EMEBC0vDYzEHmYm2BBt1jozo65zVPj7xzrZFS3R6X0QR6vrRvWuxv9Knt+zcu+5Sdx2hdV/Fzbw== jenkins@ip-10-0-1-12" >> /home/ubuntu/.ssh/authorized_keys
+    chmod 600 /home/ubuntu/.ssh/authorized_keys
+    chown -R ubuntu:ubuntu /home/ubuntu/.ssh
+  EOF
+
+  tags = {
+    Name    = "${var.project_name}-app"
+    Project = var.project_name
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
